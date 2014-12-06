@@ -8,12 +8,17 @@
 
 #import "ViewController.h"
 #import "MyScene.h"
+#import "MapData.h"
+
+
 
 @implementation ViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
 
     // Configure the view.
     SKView * skView = (SKView *)self.view;
@@ -47,5 +52,11 @@
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
 }
+
+#pragma mark map stuff
+
+
+
+
 
 @end

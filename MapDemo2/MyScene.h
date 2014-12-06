@@ -8,6 +8,21 @@
 
 #import <SpriteKit/SpriteKit.h>
 
-@interface MyScene : SKScene
+@class MapData;
 
+@interface MyScene : SKScene {
+    __strong NSMutableArray* layerMap;
+    __strong NSMutableArray* layerBucket;
+    CGRect lastDrawnRect;
+}
+
+
++(CGPoint)mapCoordinatesAtScreenPoint:(CGPoint)screenPoint;
++(CGPoint)cmapCoordinatesAtScreenPoint:(CGPoint)screenPoint;
++(CGPoint)fmapCoordinatesAtScreenPoint:(CGPoint)screenPoint;
+
+
+
+@property (strong, nonatomic) MapData* mapData;
+@property (assign) BOOL contentCreated;
 @end
