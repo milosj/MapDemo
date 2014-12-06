@@ -10,7 +10,8 @@
 #import "MapData.h"
 #import "MyScene.h"
 
-#define TILE_SIZE 25.0f
+extern float TILE_SIZE;
+
 #define LEFTRIGHT_OVERLAP 5.0f
 #define UPDOWN_OVERLAP 5.0f
 #define hex 0.0f
@@ -22,15 +23,15 @@
         /* Setup your scene here */
         
         self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
-        
-        SKLabelNode *myLabel = [SKLabelNode labelNodeWithFontNamed:@"Helvetica"];
-        
-        myLabel.text = @"Hello, World!";
-        myLabel.fontSize = 30;
-        myLabel.position = CGPointMake(CGRectGetMidX(self.frame),
-                                       CGRectGetMidY(self.frame));
-        
-        [self addChild:myLabel];
+//        
+//        SKLabelNode *myLabel = [SKLabelNode labelNodeWithFontNamed:@"Helvetica"];
+//        
+//        myLabel.text = @"Hello, World!";
+//        myLabel.fontSize = 30;
+//        myLabel.position = CGPointMake(CGRectGetMidX(self.frame),
+//                                       CGRectGetMidY(self.frame));
+//        
+//        [self addChild:myLabel];
     }
     return self;
 }
@@ -41,15 +42,24 @@
     for (UITouch *touch in touches) {
         CGPoint location = [touch locationInNode:self];
         
-        SKSpriteNode *sprite =  [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"1111.png"]];//[MapTile tile]; //[SKSpriteNode spriteNodeWithColor:[UIColor whiteColor] size:CGSizeMake(TILE_SIZE, TILE_SIZE)];
-        [sprite removeFromParent];
-        sprite.position = location;
-        sprite.size = CGSizeMake(TILE_SIZE, TILE_SIZE);
-        SKAction *action = [SKAction rotateByAngle:M_PI duration:1];
-        
-        [sprite runAction:[SKAction repeatActionForever:action]];
-        
-        [self addChild:sprite];
+        MapTile* tile = (MapTile*)[self nodeAtPoint:location];
+        NSLog(@"Tile %@ h:%i %@", tile, tile.height, [tile textureName]);
+        lastTouchLocation = location;
+    }
+}
+
+-(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch* touch in touches) {
+        CGPoint location = [touch locationInNode:self];
+        CGPoint delta = CGPointMake(lastTouchLocation.x-location.x, lastTouchLocation.y-location.y);
+        self.mapOffset = CGPointMake(self.mapOffset.x+delta.x, self.mapOffset.y+delta.y);
+        if (abs(delta.x) > 1 || abs(delta.y) > 1) {
+            for (SKNode* node in self.children) {
+                node.position = CGPointMake(node.position.x-delta.x, node.position.y-delta.y);
+            }
+            
+        }
+        lastTouchLocation = location;
     }
 }
 
@@ -69,6 +79,54 @@
 - (void)createSceneContents {
     
     self.mapData = [[MapData alloc] init];
+    /*SKAction* motionOfTheOceanUp = [SKAction moveBy:CGVectorMake(0, 20.0f) duration:3.0f];
+    motionOfTheOceanUp.timingMode = SKActionTimingEaseInEaseOut;
+    SKAction* motionOfTheOceanDown = [motionOfTheOceanUp reversedAction];
+    SKAction* motionOfTheOceanWave = [SKAction sequence:@[motionOfTheOceanUp, motionOfTheOceanDown]];
+    SKAction* motionOfTheOceanRepeat = [SKAction repeatActionForever:motionOfTheOceanWave];
+    
+    SKAction* travelFullLength = [SKAction moveByX:500 y:0 duration:30];
+    SKAction* resetTravel = [SKAction moveByX:-500 y:0 duration:0];
+    SKAction* travelLoop = [SKAction repeatActionForever:[SKAction sequence:@[travelFullLength, resetTravel]]];
+    SKAction* motionGroup = [SKAction group:@[travelLoop, motionOfTheOceanRepeat]];
+
+    //SKAction* prime = [SKAction rotateByAngle:M_PI*0.1f duration:0.0f];
+    SKAction* rotate = [SKAction sequence:@[ [SKAction rotateByAngle:M_PI*0.3 duration:0], [SKAction rotateByAngle:-M_PI duration:3.0f]]];
+    SKAction* travel = [SKAction moveByX:250 y:0 duration:3.0f];
+    travel.timingMode = SKActionTimingEaseInEaseOut;
+    SKAction* rise = [SKAction moveByX:0 y:250 duration:1.0f];
+    rise.timingMode = SKActionTimingEaseOut;
+    SKAction* fall = [SKAction moveByX:0 y:-250 duration:2.0f];
+    fall.timingMode = SKActionTimingEaseIn;
+    SKAction* riseAndFall = [SKAction sequence:@[rise, fall]];
+    SKAction* rotateBack = [SKAction rotateByAngle:M_PI*0.7 duration:0];
+    SKAction* travelBack = [SKAction moveByX:-250 y:0 duration:0];
+    SKAction* waveAction = [SKAction repeatActionForever:[SKAction sequence:@[[SKAction group:@[rotate, travel, riseAndFall]], [SKAction waitForDuration:1.5f],travelBack,rotateBack]]];
+    
+    SKTexture* bckgrnd = [SKTexture textureWithImageNamed:@"seabackground.png"];
+    
+    for (int x=0; x<6; x++) {
+        for (int y=0; y<16; y++) {
+            SKSpriteNode* bkg = [SKSpriteNode spriteNodeWithTexture:bckgrnd size:CGSizeMake(250, 125)];
+            bkg.position = CGPointMake(x*249-250, y*60);
+            bkg.zPosition = -y;
+            
+            [bkg runAction:[SKAction sequence:@[[SKAction waitForDuration:y*0.2], motionGroup]]];
+            [self addChild:bkg];
+        }
+    }*/
+    
+    /*for (int x=0; x<4; x+=2) {
+        for (int y=0; y<8; y+=2) {
+            SKSpriteNode* wave = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"wave.png"] size:CGSizeMake(500, 500)];
+            wave.position = CGPointMake(x*500+250, y*125-200);
+            wave.zPosition = -y - 0.1;
+            
+            [wave runAction:[SKAction sequence:@[[SKAction waitForDuration:(arc4random()%20)/10.0f], waveAction]]];
+            [self addChild:wave];
+        }
+    }*/
+    
     
     //create map
     /*layerMap = [NSMutableArray arrayWithCapacity:1000];

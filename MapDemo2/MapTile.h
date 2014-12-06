@@ -28,7 +28,9 @@ typedef enum {
 }
 
 -(void)connectWithTiles:(MapData*)map;
--(void)setHeight:(float)height;
+-(void)setHeight:(int)height;
+-(NSString*)textureName;
+-(SKTexture*)calculateTexture;
 
 +(MapTile*)tile;
 +(MapTile*)tileWithCoordinates:(CGPoint)coordinates;

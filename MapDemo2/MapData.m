@@ -26,15 +26,21 @@ static const int MAP_H = 100;
         self.mapSize = CGSizeMake(MAP_W, MAP_H);
         self.rows = [NSMutableArray arrayWithCapacity:self.mapSize.height];
         self.allTiles = [NSMutableArray arrayWithCapacity:self.mapSize.width*self.mapSize.height];
+        
+        
+        
         for (int y=0; y<self.mapSize.height; y++) {
+            //NSString* line = @"";
             NSMutableArray *row = [NSMutableArray arrayWithCapacity:self.mapSize.width];
             [self.rows insertObject:row atIndex:y];
             for (int x=0; x<self.mapSize.width; x++) {
                 MapTile *tile = [MapTile tileWithCoordinates:CGPointMake(x, y)];
-                [tile setHeight:[self perlinForX:x andY:y]*13.0f-4.25f];
+                [tile setHeight:[self perlinForX:x andY:y]*13.0f-3.25f];
                 [row insertObject:tile atIndex:x];
                 [allTiles addObject:tile];
+                //line = [NSString stringWithFormat:@"%@ %f", line, tile.height];
             }
+            //NSLog(line);
             if (y % (MAP_H/10) == 0) {
                 NSLog(@"%d percent done.", y/(MAP_H/100));
             }
@@ -49,6 +55,10 @@ static const int MAP_H = 100;
             }
             
             i++;
+        }
+        NSLog(@"Smoothing terrain...");
+        for (MapTile* tile in self.allTiles) {
+            tile.texture = [tile calculateTexture];
         }
         NSLog(@"Completed.\n");
     }
@@ -65,7 +75,7 @@ static const int MAP_H = 100;
 
 -(float)noiseForX:(float)x andY:(float)y {
     int n = x*y+10*x-y;
-    srand(n);
+    srand(n*log(n));
     float z = (rand()%100)/100.0f;
     return z;
 }

@@ -14,6 +14,7 @@
     __strong NSMutableArray* layerMap;
     __strong NSMutableArray* layerBucket;
     CGRect lastDrawnRect;
+    CGPoint lastTouchLocation;
 }
 
 
@@ -25,4 +26,6 @@
 
 @property (strong, nonatomic) MapData* mapData;
 @property (assign) BOOL contentCreated;
+@property (assign, nonatomic) CGPoint mapOffset;
+
 @end
