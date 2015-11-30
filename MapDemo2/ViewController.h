@@ -10,13 +10,14 @@
 #import <SpriteKit/SpriteKit.h>
 
 
+@class MyScene;
 
 @interface ViewController : UIViewController {
 
-    
+    IBOutlet UIPinchGestureRecognizer *pinchGestureRecognizer;
     
 }
 
-
+@property (strong, nonatomic) MyScene *mapScene;
 
 @end

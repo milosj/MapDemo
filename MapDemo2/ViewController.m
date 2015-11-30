@@ -17,8 +17,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    
+    [pinchGestureRecognizer addTarget:self action:@selector(pinchHappened:)];
 
     // Configure the view.
     SKView * skView = (SKView *)self.view;
@@ -26,7 +25,8 @@
     skView.showsNodeCount = YES;
     
     // Create and configure the scene.
-    SKScene * scene = [MyScene sceneWithSize:skView.bounds.size];
+    MyScene * scene = [MyScene sceneWithSize:skView.bounds.size];
+    self.mapScene = scene;
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.
@@ -55,7 +55,10 @@
 
 #pragma mark map stuff
 
+- (void)pinchHappened:(UIPinchGestureRecognizer*)pinch {
 
+    [self.mapScene mapDidPinch:pinch.scale];
+}
 
 
 
